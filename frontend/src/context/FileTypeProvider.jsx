@@ -1,19 +1,28 @@
-import React, { useState } from "react";
-import { FileContext } from "./fileType";
-// Create a provider component
-export function FileTypeProvider({ children }) {
-    const [fileType, setFileType] = useState("Text");
+import React, { createContext, useContext, useState } from 'react';
 
-    const changeFileType = (newType) => {
-        setFileType(newType);
+const FileTypeContext = createContext();
+
+export const useFileType = () => {
+    const context = useContext(FileTypeContext);
+    if (!context) {
+        throw new Error('useFileType must be used within a FileTypeProvider');
+    }
+    return context;
+};
+
+export const FileTypeProvider = ({ children }) => {
+    const [fileType, setFileType] = useState('Text');
+
+    const value = {
+        fileType,
+        setFileType
     };
 
     return (
-        <FileContext.Provider value={{
-            fileType,
-            changeFileType
-        }}>
+        <FileTypeContext.Provider value={value}>
             {children}
-        </FileContext.Provider>
+        </FileTypeContext.Provider>
     );
-}
+};
+
+export default FileTypeProvider;
