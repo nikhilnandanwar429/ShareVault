@@ -30,8 +30,36 @@ const RetrieveContent = () => {
         }
     };
 
-    const downloadFile = (filePath) => {
-        window.open(filePath, '_blank');
+    const downloadFile = async (filePath) => {
+        try {
+            // Get the file using axios with responseType blob
+            const response = await axios.get(filePath, {
+                responseType: 'blob'
+            });
+            
+            // Create a blob URL
+            const blob = new Blob([response.data]);
+            const url = window.URL.createObjectURL(blob);
+            
+            // Create a temporary anchor element
+            const link = document.createElement('a');
+            link.href = url;
+            
+            // Set the download attribute with the original filename
+            const filename = filePath.split('/').pop();
+            link.setAttribute('download', decodeURIComponent(filename));
+            
+            // Append to body, click and remove
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Clean up the blob URL
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading file:', error);
+            setError('Failed to download file. Please try again.');
+        }
     };
 
     const copyToClipboard = async (text) => {
