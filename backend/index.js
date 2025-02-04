@@ -202,3 +202,8 @@ setInterval(async () => {
         console.error('Error during scheduled cleanup:', error);
     }
 }, CLEANUP_INTERVAL);
+
+
+app.get("/api/hello", (req,res) => {
+    res.send("Hello, World!");
+})
