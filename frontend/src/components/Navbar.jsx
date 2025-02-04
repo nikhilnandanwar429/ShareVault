@@ -6,7 +6,7 @@ function Navbar() {
     const { fileType, setFileType } = useFileType();
 
     return (
-        <motion.nav 
+        <motion.nav
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -24,11 +24,10 @@ function Navbar() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => setFileType('Text')}
-                            className={`px-2 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${
-                                fileType === 'Text'
+                            className={`px-2 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${fileType === 'Text'
                                     ? 'bg-gradient-to-r from-indigo-500 to-emerald-500 text-white shadow-md'
                                     : 'text-gray-600 hover:text-gray-900'
-                            }`}
+                                }`}
                         >
                             Text
                         </motion.button>
@@ -36,11 +35,10 @@ function Navbar() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => setFileType('Files')}
-                            className={`px-2 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${
-                                fileType === 'Files'
+                            className={`px-2 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${fileType === 'Files'
                                     ? 'bg-gradient-to-r from-indigo-500 to-emerald-500 text-white shadow-md'
                                     : 'text-gray-600 hover:text-gray-900'
-                            }`}
+                                }`}
                         >
                             Files
                         </motion.button>
@@ -48,11 +46,10 @@ function Navbar() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => setFileType('Retrieve')}
-                            className={`px-2 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${
-                                fileType === 'Retrieve'
+                            className={`px-2 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${fileType === 'Retrieve'
                                     ? 'bg-gradient-to-r from-indigo-500 to-emerald-500 text-white shadow-md'
                                     : 'text-gray-600 hover:text-gray-900'
-                            }`}
+                                }`}
                         >
                             Retrieve
                         </motion.button>

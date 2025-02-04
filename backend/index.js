@@ -16,7 +16,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-    origin: process.env.FRONTEND_URI, 
+    origin: process.env.FRONTEND_URI,
     methods: ['GET', 'POST', 'DELETE'],
     credentials: true
 }));
@@ -53,7 +53,7 @@ const contentSchema = new mongoose.Schema({
     content: String,
     filename: String,
     code: String,
-    createdAt: { type: Date, default: Date.now, expires: 86400 } 
+    createdAt: { type: Date, default: Date.now, expires: 86400 }
 });
 
 const Content = mongoose.model('Content', contentSchema);
@@ -71,13 +71,13 @@ app.post('/api/upload/text', async (req, res) => {
     try {
         const { content } = req.body;
         const code = await generateUniqueCode();
-        
+
         const newContent = new Content({
             type: 'text',
             content,
             code
         });
-        
+
         await newContent.save();
         res.json({ code });
     } catch (error) {
@@ -92,14 +92,14 @@ app.post('/api/upload/file', upload.single('file'), async (req, res) => {
         }
 
         const code = await generateUniqueCode();
-        
+
         const newContent = new Content({
             type: 'file',
             content: req.file.path,
             filename: req.file.originalname,
             code
         });
-        
+
         await newContent.save();
         res.json({ code });
     } catch (error) {
@@ -111,11 +111,11 @@ app.get('/api/content/:code', async (req, res) => {
     try {
         const { code } = req.params;
         const content = await Content.findOne({ code });
-        
+
         if (!content) {
             return res.status(404).json({ error: 'Content not found' });
         }
-        
+
         res.json(content);
     } catch (error) {
         res.status(500).json({ error: 'Error retrieving content' });
@@ -127,7 +127,7 @@ app.get('/api/download/:code', async (req, res) => {
     try {
         const { code } = req.params;
         const content = await Content.findOne({ code });
-        
+
         if (!content) {
             return res.status(404).json({ error: 'Content not found' });
         }
@@ -138,7 +138,7 @@ app.get('/api/download/:code', async (req, res) => {
 
         // Get the absolute path to the file
         const filePath = join(__dirname, content.content);
-        
+
         // Check if file exists
         if (!fs.existsSync(filePath)) {
             return res.status(404).json({ error: 'File not found' });
@@ -175,21 +175,21 @@ app.delete('/api/delete-all', async (req, res) => {
 
         await Content.deleteMany({});
 
-        res.json({ 
+        res.json({
             message: 'Successfully deleted all content',
             filesDeleted: true,
             databaseCleared: true
         });
     } catch (error) {
         console.error('Error in delete-all route:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Failed to delete all content',
-            message: error.message 
+            message: error.message
         });
     }
 });
 
-const CLEANUP_INTERVAL = 7 * 24 * 60 * 60 * 1000; 
+const CLEANUP_INTERVAL = 7 * 24 * 60 * 60 * 1000;
 
 setInterval(async () => {
     try {
@@ -204,6 +204,6 @@ setInterval(async () => {
 }, CLEANUP_INTERVAL);
 
 
-app.get("/api/hello", (req,res) => {
-    res.send("Hello, World!");
+app.get("/api/hello", (req, res) => {
+    res.status(200).json({ message: "Hello, World!" });
 })

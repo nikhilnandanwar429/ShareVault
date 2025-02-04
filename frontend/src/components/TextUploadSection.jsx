@@ -24,12 +24,12 @@ function TextUploadSection() {
 
         setLoading(true);
         setError('');
-        
+
         try {
             const response = await axios.post(API_BASE_URL + ENDPOINTS.UPLOAD_TEXT, {
                 content: textContent
             });
-            
+
             setGeneratedCode(response.data.code);
         } catch (error) {
             setError(error.response?.data?.error || 'Failed to upload text');
@@ -53,7 +53,7 @@ function TextUploadSection() {
                         </h2>
                         <p className="text-gray-600">Enter your text below to get a sharing code</p>
                     </div>
-                    
+
                     <div className="group relative overflow-hidden rounded-lg">
                         <textarea
                             name="sendText"
@@ -75,7 +75,7 @@ function TextUploadSection() {
                             {error}
                         </motion.div>
                     )}
-                    
+
                     <div className="flex justify-end gap-4 mt-6">
                         <motion.button
                             whileHover={{ scale: 1.02 }}
@@ -85,7 +85,7 @@ function TextUploadSection() {
                         >
                             Reset
                         </motion.button>
-                        
+
                         <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}

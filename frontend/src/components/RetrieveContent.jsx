@@ -19,7 +19,7 @@ const RetrieveContent = () => {
 
         setLoading(true);
         setError('');
-        
+
         try {
             const response = await axios.get(API_BASE_URL + ENDPOINTS.GET_CONTENT(code));
             setContent(response.data);
@@ -36,15 +36,15 @@ const RetrieveContent = () => {
             const response = await axios.get(`${API_BASE_URL}/api/download/${code}`, {
                 responseType: 'blob'
             });
-            
+
             // Create a blob URL
             const blob = new Blob([response.data]);
             const url = window.URL.createObjectURL(blob);
-            
+
             // Create a temporary anchor element
             const link = document.createElement('a');
             link.href = url;
-            
+
             // Get filename from content-disposition header or use a default
             const contentDisposition = response.headers['content-disposition'];
             let filename = 'downloaded-file';
@@ -56,14 +56,14 @@ const RetrieveContent = () => {
             } else if (content && content.filename) {
                 filename = content.filename;
             }
-            
+
             link.setAttribute('download', decodeURIComponent(filename));
-            
+
             // Append to body, click and remove
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
+
             // Clean up the blob URL
             window.URL.revokeObjectURL(url);
         } catch (error) {
