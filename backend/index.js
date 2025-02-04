@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
+import fetch from 'node-fetch';
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -137,7 +138,6 @@ app.delete('/api/delete-all', async (req, res) => {
             }
         }
 
-        // Delete all records from MongoDB
         await Content.deleteMany({});
 
         res.json({ 
@@ -153,3 +153,17 @@ app.delete('/api/delete-all', async (req, res) => {
         });
     }
 });
+
+const CLEANUP_INTERVAL = 7 * 24 * 60 * 60 * 1000; 
+
+setInterval(async () => {
+    try {
+        const response = await fetch(process.env.BACKEND_URL + `/api/delete-all`, {
+            method: 'DELETE'
+        });
+        const data = await response.json();
+        console.log('Scheduled cleanup completed:', data);
+    } catch (error) {
+        console.error('Error during scheduled cleanup:', error);
+    }
+}, CLEANUP_INTERVAL);
