@@ -122,6 +122,41 @@ app.get('/api/content/:code', async (req, res) => {
     }
 });
 
+// Download route
+app.get('/api/download/:code', async (req, res) => {
+    try {
+        const { code } = req.params;
+        const content = await Content.findOne({ code });
+        
+        if (!content) {
+            return res.status(404).json({ error: 'Content not found' });
+        }
+
+        if (content.type !== 'file') {
+            return res.status(400).json({ error: 'Content is not a file' });
+        }
+
+        // Get the absolute path to the file
+        const filePath = join(__dirname, content.content);
+        
+        // Check if file exists
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({ error: 'File not found' });
+        }
+
+        // Set headers for file download
+        res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(content.filename)}"`);
+        res.setHeader('Content-Type', 'application/octet-stream');
+
+        // Stream the file
+        const fileStream = fs.createReadStream(filePath);
+        fileStream.pipe(res);
+    } catch (error) {
+        console.error('Error in download route:', error);
+        res.status(500).json({ error: 'Error downloading file' });
+    }
+});
+
 // Delete all data route
 app.delete('/api/delete-all', async (req, res) => {
     try {

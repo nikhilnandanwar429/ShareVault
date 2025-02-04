@@ -32,8 +32,8 @@ const RetrieveContent = () => {
 
     const downloadFile = async (filePath) => {
         try {
-            // Get the file using axios with responseType blob
-            const response = await axios.get(filePath, {
+            // First get the file data through our API endpoint
+            const response = await axios.get(`${API_BASE_URL}/api/download/${code}`, {
                 responseType: 'blob'
             });
             
@@ -45,8 +45,18 @@ const RetrieveContent = () => {
             const link = document.createElement('a');
             link.href = url;
             
-            // Set the download attribute with the original filename
-            const filename = filePath.split('/').pop();
+            // Get filename from content-disposition header or use a default
+            const contentDisposition = response.headers['content-disposition'];
+            let filename = 'downloaded-file';
+            if (contentDisposition) {
+                const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                if (filenameMatch && filenameMatch[1]) {
+                    filename = filenameMatch[1].replace(/['"]/g, '');
+                }
+            } else if (content && content.filename) {
+                filename = content.filename;
+            }
+            
             link.setAttribute('download', decodeURIComponent(filename));
             
             // Append to body, click and remove
