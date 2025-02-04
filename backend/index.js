@@ -40,8 +40,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch((err) => console.error('MongoDB connection error:', err));
+    .then(() => {
+        app.listen(PORT);
+    })
+    .catch((err) => {
+        throw err;
+    });
 
 const contentSchema = new mongoose.Schema({
     type: String,
@@ -148,8 +152,4 @@ app.delete('/api/delete-all', async (req, res) => {
             message: error.message 
         });
     }
-});
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
 });
