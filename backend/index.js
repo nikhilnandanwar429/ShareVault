@@ -42,7 +42,9 @@ const upload = multer({ storage: storage });
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
-        app.listen(PORT);
+        app.listen(PORT, () =>{
+            // console.log(`Server running on port ${PORT}`);
+        });
     })
     .catch((err) => {
         throw err;

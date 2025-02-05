@@ -32,13 +32,13 @@ const RetrieveContent = () => {
 
     const downloadFile = async (filePath) => {
         try {
-            // First get the file data through our API endpoint
-            const response = await axios.get(`${API_BASE_URL}/api/download/${code}`, {
+            setError(''); // Clear any previous errors
+            const response = await axios.get(`${API_BASE_URL}${ENDPOINTS.DOWNLOAD_FILE(code)}`, {
                 responseType: 'blob'
             });
 
             // Create a blob URL
-            const blob = new Blob([response.data]);
+            const blob = new Blob([response.data], { type: response.headers['content-type'] });
             const url = window.URL.createObjectURL(blob);
 
             // Create a temporary anchor element
@@ -47,14 +47,12 @@ const RetrieveContent = () => {
 
             // Get filename from content-disposition header or use a default
             const contentDisposition = response.headers['content-disposition'];
-            let filename = 'downloaded-file';
+            let filename = content?.filename || 'downloaded-file';
             if (contentDisposition) {
                 const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
                 if (filenameMatch && filenameMatch[1]) {
                     filename = filenameMatch[1].replace(/['"]/g, '');
                 }
-            } else if (content && content.filename) {
-                filename = content.filename;
             }
 
             link.setAttribute('download', decodeURIComponent(filename));
@@ -68,7 +66,7 @@ const RetrieveContent = () => {
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error('Error downloading file:', error);
-            setError('Failed to download file. Please try again.');
+            setError(error.response?.data?.error || 'Failed to download file. Please try again.');
         }
     };
 
