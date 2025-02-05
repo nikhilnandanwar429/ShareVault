@@ -32,7 +32,7 @@ const RetrieveContent = () => {
 
     const downloadFile = async (filePath) => {
         try {
-            setError(''); // Clear any previous errors
+            setError(''); 
             const response = await axios.get(`${API_BASE_URL}${ENDPOINTS.DOWNLOAD_FILE(code)}`, {
                 responseType: 'blob'
             });
@@ -151,8 +151,8 @@ const RetrieveContent = () => {
                                     </button>
                                 </div>
                             ) : (
-                                <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
-                                    <div>
+                                <div className="flex items-center justify-between bg-gray-50 py-4 rounded-lg">
+                                    <div className='w-1/2 overflow-hidden'>
                                         <p className="text-sm font-medium text-gray-900">{content.filename}</p>
                                         <p className="text-xs text-gray-500">Click to download</p>
                                     </div>
