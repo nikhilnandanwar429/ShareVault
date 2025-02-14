@@ -32,7 +32,7 @@ const RetrieveContent = () => {
 
     const downloadFile = async (filePath) => {
         try {
-            setError(''); 
+            setError('');
             const response = await axios.get(`${API_BASE_URL}${ENDPOINTS.DOWNLOAD_FILE(code)}`, {
                 responseType: 'blob'
             });

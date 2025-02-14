@@ -119,8 +119,8 @@ const FileUploadSection = () => {
 
                     <div
                         className={`relative border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-300 ${isDragging
-                                ? 'border-indigo-500 bg-indigo-50'
-                                : 'border-gray-300 hover:border-indigo-500 hover:bg-gray-50'
+                            ? 'border-indigo-500 bg-indigo-50'
+                            : 'border-gray-300 hover:border-indigo-500 hover:bg-gray-50'
                             }`}
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
