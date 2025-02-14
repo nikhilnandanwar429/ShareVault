@@ -23,14 +23,7 @@ const MainContent = () => {
 };
 
 function App() {
-  useEffect(async () => {
-    try {
-      const response = await axios.post(API_BASE_URL + "/api/hello", {
-      });
-    } catch (error) {
 
-    }
-  }, [])
   return (
     <FileTypeProvider>
       <div className="min-h-screen bg-gray-50 flex flex-col items-center">
