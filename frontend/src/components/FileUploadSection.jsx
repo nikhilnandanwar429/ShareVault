@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { API_BASE_URL, ENDPOINTS } from '../config/api';
@@ -12,6 +12,7 @@ const FileUploadSection = () => {
     const fileInputRef = useRef(null);
 
     const allowedTypes = {
+        'image': ['.jpg', '.jpeg', '.png', '.gif', '.webp'],
         'video': ['.mp4', '.avi', '.mov', '.mkv', '.webm'],
         'audio': ['.mp3', '.wav', '.ogg', '.m4a'],
         'document': ['.pdf', '.doc', '.docx', '.txt', '.xlsx', '.ppt', '.pptx']
@@ -55,12 +56,20 @@ const FileUploadSection = () => {
     };
 
     const removeFile = (index) => {
+        const file = files[index];
+        const icon = getFileIcon(file);
+        if (icon.startsWith('blob:')) {
+            URL.revokeObjectURL(icon);
+        }
         setFiles(prev => prev.filter((_, i) => i !== index));
         setGeneratedCode('');
     };
 
     const getFileIcon = (file) => {
         const extension = '.' + file.name.split('.').pop().toLowerCase();
+        if (allowedTypes.image.includes(extension)) {
+            return URL.createObjectURL(file); // Return preview URL for images
+        }
         if (allowedTypes.video.includes(extension)) return '🎥';
         if (allowedTypes.audio.includes(extension)) return '🎵';
         return '📄';
@@ -100,6 +109,49 @@ const FileUploadSection = () => {
             setLoading(false);
         }
     };
+
+    const FilePreview = ({ file, index }) => {
+        const icon = getFileIcon(file);
+        const isImage = icon.startsWith('blob:');
+        
+        return (
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="flex items-center justify-between p-2 mb-2 bg-gray-100 rounded-lg"
+            >
+                <div className="flex items-center space-x-3">
+                    {isImage ? (
+                        <img src={icon} alt={file.name} className="w-12 h-12 object-cover rounded" />
+                    ) : (
+                        <span className="text-2xl">{icon}</span>
+                    )}
+                    <div>
+                        <p className="text-sm font-medium text-gray-700">{file.name}</p>
+                        <p className="text-xs text-gray-500">{getFileSize(file.size)}</p>
+                    </div>
+                </div>
+                <button
+                    onClick={() => removeFile(index)}
+                    className="p-1 text-red-500 hover:text-red-700"
+                >
+                    ✕
+                </button>
+            </motion.div>
+        );
+    };
+
+    useEffect(() => {
+        return () => {
+            files.forEach(file => {
+                const icon = getFileIcon(file);
+                if (icon.startsWith('blob:')) {
+                    URL.revokeObjectURL(icon);
+                }
+            });
+        };
+    }, [files]);
 
     return (
         <motion.div
@@ -145,7 +197,7 @@ const FileUploadSection = () => {
                                 <span className="font-medium text-indigo-500">Click to upload</span> or drag and drop
                             </div>
                             <div className="text-xs text-gray-500">
-                                Supported formats: Video (MP4, AVI, MOV), Audio (MP3, WAV), Documents (PDF, DOC, TXT)
+                                Supported formats: Image (JPG, PNG, GIF), Video (MP4, AVI, MOV), Audio (MP3, WAV), Documents (PDF, DOC, TXT)
                             </div>
                         </div>
                     </div>
@@ -165,29 +217,7 @@ const FileUploadSection = () => {
                             <h3 className="text-lg font-medium text-gray-900">Selected Files</h3>
                             <div className="space-y-2">
                                 {files.map((file, index) => (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: 20 }}
-                                        className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border border-gray-200"
-                                    >
-                                        <div className="flex items-center space-x-3">
-                                            <span className="text-2xl">{getFileIcon(file)}</span>
-                                            <div>
-                                                <p className="text-sm font-medium text-gray-900">{file.name}</p>
-                                                <p className="text-xs text-gray-500">{getFileSize(file.size)}</p>
-                                            </div>
-                                        </div>
-                                        <button
-                                            onClick={() => removeFile(index)}
-                                            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                                        >
-                                            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                        </button>
-                                    </motion.div>
+                                    <FilePreview key={index} file={file} index={index} />
                                 ))}
                             </div>
 
